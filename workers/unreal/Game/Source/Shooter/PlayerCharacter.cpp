@@ -15,6 +15,7 @@
 #include "EntityId.h"
 #include "Commander.h"
 #include "ShotPoint.h"
+#include "HealthComponent.h"
 #include "HealthBehaviour.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -117,7 +118,16 @@ void APlayerCharacter::OnShotEventServer(UShot* newEvent)
 			return;
 		}
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Server Hit: ") + HitResult.Actor->GetName());
-		Target->HealthBehaviour->TakeDamage(HitResult.ImpactPoint, newEvent->GetStart());
+		
+		if (Target->HealthBehaviour->HealthComponent->GetAuthority() == EAuthority::Authoritative)
+		{
+			Target->HealthBehaviour->TakeDamage(HitResult.ImpactPoint, newEvent->GetStart());
+		}
+		else
+		{
+			auto TargetEntityId = FEntityId(Target->HealthBehaviour->HealthComponent->GetEntityId());
+			SendTakeDamageCommand(TargetEntityId, HitResult.ImpactPoint, newEvent->GetStart());
+		}
 	}
 }
 
@@ -143,6 +153,8 @@ void APlayerCharacter::FireRight()
 	FVector Start;
 	FVector End;
 	GetLineTracePoints(Start, End);
+	// Immediately draw a line
+	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 15.f);
 
 	const auto rawUpdate = improbable::PlayerControls::Update();
 	const auto event = NewObject<UShot>()->Init(improbable::Shot(::improbable::Vector3f(0, 0, 0), ::improbable::Vector3f(0, 0, 0)))->SetStart(Start)->SetEnd(End);
@@ -161,11 +173,16 @@ void APlayerCharacter::FireRight()
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Client Hit: ") + HitResult.Actor->GetName());
 	
-	auto TargetEntityId = Target->PositionBehaviour->PositionComponent->GetEntityId();
-	auto request = NewObject<UShot>()->Init(improbable::Shot(::improbable::Vector3f(0, 0, 0), ::improbable::Vector3f(0, 0, 0)))->SetEnd(HitResult.ImpactPoint)->SetStart(Start);
+	auto TargetEntityId = FEntityId(Target->PositionBehaviour->PositionComponent->GetEntityId());
+	SendTakeDamageCommand(TargetEntityId, HitResult.ImpactPoint, Start);
+}
+
+void APlayerCharacter::SendTakeDamageCommand(const FEntityId& targetEntityId, const FVector& start, const FVector& end)
+{
+	auto request = NewObject<UShot>()->Init(improbable::Shot(::improbable::Vector3f(0, 0, 0), ::improbable::Vector3f(0, 0, 0)))->SetEnd(end)->SetStart(start);
 	auto callback = FTakeDamageCommandCommandResultDelegate();
 	callback.BindDynamic(this, &APlayerCharacter::OnTakeDamageCommandResult);
-	GameInstance->Commander->TakeDamageCommand(TargetEntityId, request, callback, 0);
+	GameInstance->Commander->TakeDamageCommand(targetEntityId, request, callback, 0);
 }
 
 void APlayerCharacter::OnTakeDamageCommandResult(const FSpatialOSCommandResult& result, UEmpty* response)

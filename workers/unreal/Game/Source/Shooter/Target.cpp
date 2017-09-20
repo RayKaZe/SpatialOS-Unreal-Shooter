@@ -19,3 +19,8 @@ void ATarget::BeginPlay()
 	GameInstance = Cast<UShooterGameInstance>(GetWorld()->GetGameInstance());
 	check(GameInstance);
 }
+
+void ATarget::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}

@@ -21,6 +21,8 @@ UHealthBehaviour::UHealthBehaviour()
 void UHealthBehaviour::BeginPlay()
 {
 	Super::BeginPlay();
+	GameInstance = Cast<UShooterGameInstance>(GetWorld()->GetGameInstance());
+	check(GameInstance);
 	HealthComponent->OnTakeDamageCommandCommandRequest.AddDynamic(this, &UHealthBehaviour::OnTakeDamageCommandRequest);
 	HealthComponent->OnTakeDamageEvent.AddDynamic(this, &UHealthBehaviour::OnTakeDamageEvent);
 }
@@ -37,6 +39,12 @@ void UHealthBehaviour::EndPlay(EEndPlayReason::Type EndPlayReason)
 
 void UHealthBehaviour::TakeDamage(const FVector& position, const FVector& start)
 {
+	if (HealthComponent->GetAuthority() != EAuthority::Authoritative)
+	{
+		GameInstance->LogError(TEXT("UHealthBehaviour::TakeDamage: No authority."));
+		return;
+	}
+
 	const auto rawUpdate = improbable::Health::Update();
 	const auto event = NewObject<UShotPoint>()->Init(improbable::ShotPoint(::improbable::Vector3f(0, 0, 0)))->SetPosition(position);
 	const auto update = NewObject<UHealthComponentUpdate>()->Init(rawUpdate)->AddTakeDamageEvent(event);
@@ -66,7 +74,9 @@ void UHealthBehaviour::OnTakeDamageEvent(UShotPoint* newEvent)
 	auto ExplosionInstance = GetWorld()->SpawnActor<AActor>(*ExplosionEffect, newEvent->GetPosition(), FRotator::ZeroRotator, FActorSpawnParameters());
 	ExplosionInstance->SetActorScale3D(FVector(0.3f, 0.3f, 0.3f));
 
+	/*
 	auto GameInstance = Cast<UShooterGameInstance>(GetWorld()->GetGameInstance());
 	check(GameInstance);
 	GameInstance->LogError(TEXT("I'm hit!"));
+	*/
 }

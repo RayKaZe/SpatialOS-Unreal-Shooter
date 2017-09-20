@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SpatialOSCommandResult.h"
+#include "EntityId.h"
 #include "PlayerCharacter.generated.h"
 
 class UPositionBehaviour;
@@ -46,6 +47,7 @@ public:
 	void FireLeft();
 	UFUNCTION(BlueprintCallable)
     void FireRight();
+	void SendTakeDamageCommand(const FEntityId& targetEntityId, const FVector& start, const FVector& end);
 	UFUNCTION()
 	void OnTakeDamageCommandResult(const FSpatialOSCommandResult& result, UEmpty* response);
 	

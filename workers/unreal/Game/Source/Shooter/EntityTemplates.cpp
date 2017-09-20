@@ -29,6 +29,7 @@ UEntityTemplate* UEntityTemplates::CreatePlayerCharacterTemplate(const FString& 
 		.AddMetadataComponent(NewObject<UMetadataData>()->Init(metadataData)->GetUnderlying())
 		.SetPersistence(false)
 		.SetReadAcl(anyWorkerReadPermission)
+		.AddComponent<::improbable::Rotation>(::improbable::RotationData(::improbable::Quaternion(0, 0, 0, 0)), specificClientWritePermission)
 		.AddComponent<::improbable::PlayerControls>(::improbable::PlayerControlsData(), specificClientWritePermission)
 		.AddComponent<::improbable::Health>(::improbable::HealthData(100), specificClientWritePermission)
 		.Build();
@@ -57,6 +58,7 @@ UEntityTemplate* UEntityTemplates::CreateTargetTemplate(const FString& workerId,
 		.AddMetadataComponent(NewObject<UMetadataData>()->Init(metadataData)->GetUnderlying())
 		.SetPersistence(false)
 		.SetReadAcl(anyWorkerReadPermission)
+		.AddComponent<::improbable::Rotation>(::improbable::RotationData(::improbable::Quaternion(0, 0, 0, 0)), specificClientWritePermission)
 		.AddComponent<::improbable::Health>(::improbable::HealthData(100), specificClientWritePermission)
 		.Build();
 

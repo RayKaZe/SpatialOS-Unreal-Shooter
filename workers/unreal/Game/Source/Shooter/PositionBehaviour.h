@@ -5,6 +5,7 @@
 #include "PositionBehaviour.generated.h"
 
 class UPositionComponent;
+class URotationComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTER_API UPositionBehaviour : public UActorComponent
@@ -21,4 +22,9 @@ public:
 	UPositionComponent* PositionComponent;
 	UFUNCTION()
 	void OnPositionUpdate();
+
+	UPROPERTY()
+	URotationComponent* RotationComponent;
+	UFUNCTION()
+	void OnRotationUpdate();
 };

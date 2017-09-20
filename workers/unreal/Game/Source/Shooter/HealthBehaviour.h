@@ -7,6 +7,7 @@
 class UHealthComponent;
 class UTakeDamageCommandCommandResponder;
 class UShotPoint;
+class UShooterGameInstance;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTER_API UHealthBehaviour : public UActorComponent
@@ -19,6 +20,8 @@ public:
 	void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
 	TSubclassOf<AActor> ExplosionEffect;
+	
+	UShooterGameInstance* GameInstance;
 	UPROPERTY()
 	UHealthComponent* HealthComponent;
 
