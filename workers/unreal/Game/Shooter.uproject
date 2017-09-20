@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{DC826936-4850-F4B1-07E2-30896F1D037B}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Shooter",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	],
+	"PostBuildSteps":
+	{
+		"Win64": [
+			"cd /D \"$(ProjectDir)\"",
+			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -allmaps",
+			"exit /B %ERRORLEVEL%"
+		],
+		"Linux": [
+			"cd \"$(ProjectDir)\"",
+			"spatial invoke unreal package --engineDir=\"$(EngineDir)\" --project=\"$(ProjectFile)\" --platform=\"$(TargetPlatform)\" --target=\"$(TargetType)\" --configuration=\"$(TargetConfiguration)\" -- -allmaps",
+			"exit /B %ERRORLEVEL%"
+		]
+	}
+}

@@ -1,0 +1,11 @@
+{
+  "name": "zergling",
+  "project_version": "1.3.3.7",
+  "sdk_version": "12.0.0-b8313-d527b-SNAPSHOT",
+  "dependencies": [
+    {
+      "name": "standard_library",
+      "version": "12.0.0-b8313-d527b-SNAPSHOT"
+    }
+  ]
+}

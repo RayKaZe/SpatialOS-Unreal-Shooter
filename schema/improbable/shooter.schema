@@ -1,0 +1,37 @@
+package improbable;
+  
+import "improbable/vector3.schema";
+
+enum WorkerType {
+  Client = 0;
+  Server = 1;
+}
+
+type Empty {}
+
+component Transform {
+  id = 1000;
+  Vector3f rotation = 1;
+}
+
+type Shot {
+  Vector3f start = 1;
+  Vector3f end = 2;
+}
+
+type ShotPoint {
+  Vector3f position = 1;
+}
+
+component PlayerControls {
+  id = 1001;
+  event Shot shot_event_client;
+  event Shot shot_event_server;
+}
+
+component Health {
+  id = 1002;
+  int32 value = 1;
+  event ShotPoint take_damage_event;
+  command Empty take_damage_command(Shot);
+}

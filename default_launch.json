@@ -1,0 +1,46 @@
+{
+  "template": "small",
+  "world": {
+    "chunkEdgeLengthMeters": 50,
+    "snapshots": {
+      "snapshotWritePeriodSeconds": 0
+    },
+    "dimensions": {
+      "xMeters": 8000,
+      "zMeters": 8000
+    },
+    "legacyFlags": [
+      {
+        "name": "load_snapshot_at_startup",
+        "value": "true"
+      },
+      {
+        "name": "snapshot_source_file",
+        "value": "snapshots/default.snapshot"
+      }
+    ]
+  },
+  "workers": [
+    {
+      "worker_type": "UnrealWorker",
+      "permissions": [
+        {
+          "all": {}
+        }
+      ],
+      "load_balancing": {
+        "auto_hex_grid": {
+          "num_workers": 1
+        }
+      }
+    },
+    {
+      "worker_type": "UnrealClient",
+      "permissions": [
+        {
+          "all": {}
+        }
+      ]
+    }
+  ]
+}
